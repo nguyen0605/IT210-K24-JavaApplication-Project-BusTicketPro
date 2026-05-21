@@ -3,12 +3,6 @@
 Bus Ticket Pro là ứng dụng Java Web monolithic cho hệ thống đặt vé xe khách liên tỉnh. Ứng dụng gồm giao diện Thymeleaf, Spring MVC controller, service nghiệp vụ, Spring Data JPA repository và database MySQL trong cùng một project.
 
 
-Project chỉ kết nối vào database đã có sẵn, không còn lưu script SQL trong `src/main/resources/db`.
-
-
-Nếu không đặt biến môi trường, default trong `src/main/resources/application.properties` là `localhost:3306/bus_ticket_pro`, user `root`, password `0605`.
-
-
 ```bash
 $env:MAIL_USERNAME="gmail cua ban@gmail.com"
 $env:MAIL_PASSWORD=""
