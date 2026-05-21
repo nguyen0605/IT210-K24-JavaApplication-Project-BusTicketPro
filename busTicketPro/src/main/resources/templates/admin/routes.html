@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/admin-ui :: head('Tuyến đường / Tỉnh thành - Bus Ticket Pro')}"></head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<header th:replace="~{fragments/admin-ui :: nav('routes')}"></header>
+<main class="mt-[72px] flex-grow px-margin-mobile md:px-margin-desktop max-w-[1200px] mx-auto w-full py-stack-lg space-y-stack-lg">
+    <div class="pt-stack-md">
+        <h1 class="font-headline-lg text-headline-lg text-on-surface">Tuyến đường / Tỉnh thành</h1>
+        <p class="font-body-md text-body-md text-on-surface-variant mt-1">
+            Dữ liệu tỉnh thành và tuyến vận tải được seed sẵn để phục vụ tìm chuyến, đặt vé và tra cứu vé.
+        </p>
+    </div>
+
+    <div class="bg-surface-container-low border border-primary/20 rounded-xl p-4 flex items-start gap-4 shadow-sm">
+        <span class="material-symbols-outlined text-primary">info</span>
+        <div>
+            <p class="font-label-md text-label-md text-on-surface">Dữ liệu tham chiếu</p>
+            <p class="font-body-sm text-body-sm text-on-surface-variant">
+                Trang này chỉ hiển thị và lọc dữ liệu tuyến đường đã seed, không tạo tuyến mới từ giao diện quản trị.
+            </p>
+        </div>
+    </div>
+
+    <section class="space-y-stack-md">
+        <h2 class="font-headline-sm text-headline-sm text-on-surface">Danh sách tỉnh / thành phố</h2>
+        <div class="bg-white rounded-xl shadow-sm border border-outline-variant overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[560px]">
+                    <thead>
+                    <tr class="bg-surface-container-low border-b border-outline-variant">
+                        <th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase">ID</th>
+                        <th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase">Tên tỉnh / thành</th>
+                        <th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase">Trạng thái</th>
+                    </tr>
+                    </thead>
+                    <tbody class="divide-y divide-outline-variant">
+                    <tr th:each="l : ${locations}" class="hover:bg-surface-container-lowest">
+                        <td class="px-6 py-4 font-body-md text-body-md" th:text="${l.id}">1</td>
+                        <td class="px-6 py-4 font-body-md text-body-md font-semibold" th:text="${l.name}">Hà Nội</td>
+                        <td class="px-6 py-4">
+                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-label-sm font-label-sm">Hoạt động</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="space-y-stack-md pt-stack-md">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-stack-md">
+            <div>
+                <h2 class="font-headline-sm text-headline-sm text-on-surface">Danh sách tuyến đường vận tải</h2>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Lọc theo điểm đi và điểm đến để kiểm tra tuyến đang khai thác.</p>
+            </div>
+        </div>
+
+        <form th:action="@{/admin/routes}" method="get" class="bg-white p-6 rounded-xl shadow-sm border border-outline-variant grid grid-cols-1 md:grid-cols-4 gap-stack-md items-end">
+            <div class="space-y-2">
+                <label class="block font-label-md text-label-md text-on-surface" for="departureId">Điểm khởi hành</label>
+                <select id="departureId" name="departureId" class="w-full border-outline-variant rounded-lg font-body-md text-body-md focus:ring-primary focus:border-primary">
+                    <option value="">Tất cả</option>
+                    <option th:each="l : ${locations}" th:value="${l.id}" th:selected="${departureId == l.id}" th:text="${l.name}">Hà Nội</option>
+                </select>
+            </div>
+            <div class="space-y-2">
+                <label class="block font-label-md text-label-md text-on-surface" for="arrivalId">Điểm đến</label>
+                <select id="arrivalId" name="arrivalId" class="w-full border-outline-variant rounded-lg font-body-md text-body-md focus:ring-primary focus:border-primary">
+                    <option value="">Tất cả</option>
+                    <option th:each="l : ${locations}" th:value="${l.id}" th:selected="${arrivalId == l.id}" th:text="${l.name}">Hải Phòng</option>
+                </select>
+            </div>
+            <div class="space-y-2">
+                <label class="block font-label-md text-label-md text-on-surface">Trạng thái tuyến</label>
+                <select class="w-full border-outline-variant rounded-lg font-body-md text-body-md bg-surface-container-low" disabled>
+                    <option>Đang khai thác</option>
+                </select>
+            </div>
+            <div class="flex gap-stack-sm">
+                <button class="bg-primary text-on-primary py-3 px-6 rounded-lg font-label-md text-label-md hover:bg-primary-container flex items-center justify-center gap-2 flex-1" type="submit">
+                    <span class="material-symbols-outlined">search</span>Lọc dữ liệu
+                </button>
+                <a th:href="@{/admin/routes}" class="border border-outline text-primary py-3 px-4 rounded-lg font-label-md text-label-md hover:bg-primary-fixed flex items-center justify-center">Reset</a>
+            </div>
+        </form>
+
+        <div class="bg-white rounded-xl shadow-sm border border-outline-variant overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[800px]">
+                    <thead>
+                    <tr class="bg-surface-container-low border-b border-outline-variant">
+                        <th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase">Mã tuyến</th>
+                        <th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase">Điểm đầu - điểm cuối</th>
+                        <th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase text-center">Cự ly (km)</th>
+                        <th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase text-center">Thời gian dự kiến</th>
+                        <th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase">Trạng thái</th>
+                    </tr>
+                    </thead>
+                    <tbody class="divide-y divide-outline-variant">
+                    <tr th:each="r : ${routes}" class="hover:bg-surface-container-lowest">
+                        <td class="px-6 py-4 font-body-md text-body-md text-primary font-bold" th:text="'R-' + ${r.id}">R-1</td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-2 font-body-md text-body-md">
+                                <span th:text="${r.departure.name}">Hà Nội</span>
+                                <span class="material-symbols-outlined text-outline text-sm">trending_flat</span>
+                                <span th:text="${r.arrival.name}">Hải Phòng</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-center font-body-md text-body-md" th:text="${r.distanceKm != null ? r.distanceKm : '-'}">120</td>
+                        <td class="px-6 py-4 text-center font-body-md text-body-md" th:text="${r.estimatedDurationMinutes != null ? r.estimatedDurationMinutes + ' phút' : '-'}">150 phút</td>
+                        <td class="px-6 py-4">
+                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-label-sm font-label-sm">Đang khai thác</span>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(routes)}">
+                        <td colspan="5" class="px-6 py-8 text-center text-on-surface-variant font-body-md">Không tìm thấy tuyến đường phù hợp.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="px-6 py-4 bg-surface-container-low flex items-center justify-between border-t border-outline-variant">
+                <span class="font-body-sm text-body-sm text-on-surface-variant" th:text="'Hiển thị ' + ${#lists.size(routes)} + ' tuyến đường'">Hiển thị 0 tuyến đường</span>
+            </div>
+        </div>
+    </section>
+</main>
+<footer th:replace="~{fragments/admin-ui :: footer}"></footer>
+</body>
+</html>

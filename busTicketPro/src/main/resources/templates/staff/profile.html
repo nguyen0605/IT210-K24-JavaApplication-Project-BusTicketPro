@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/staff-ui :: head('Hồ sơ cá nhân')}"></head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col">
+<header th:replace="~{fragments/staff-ui :: nav('profile')}"></header>
+<div th:replace="~{fragments/staff-ui :: messages}"></div>
+<main class="flex-grow px-margin-mobile md:px-margin-desktop py-stack-lg max-w-[1200px] mx-auto w-full">
+    <div class="flex flex-col gap-stack-lg">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-stack-md">
+            <div>
+                <nav class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm mb-2">
+                    <a class="hover:text-primary" th:href="@{/staff}">Nhân viên</a>
+                    <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                    <span class="text-on-surface">Hồ sơ cá nhân</span>
+                </nav>
+                <h1 class="font-headline-lg text-headline-lg text-on-surface">Hồ sơ cá nhân</h1>
+            </div>
+            <div class="flex items-center gap-stack-sm bg-primary-container/10 px-stack-md py-1 rounded-full">
+                <span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+                <span class="font-label-md text-label-md text-primary">Nhân viên hệ thống</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-stack-lg mt-stack-md">
+            <aside class="lg:col-span-4 flex flex-col gap-stack-lg">
+                <section class="bg-surface-container-lowest p-stack-lg rounded-xl shadow-sm border border-outline-variant flex flex-col items-center text-center">
+                    <div class="relative">
+                        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-surface-container-high shadow-inner bg-primary-fixed flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary text-[64px]">account_circle</span>
+                        </div>
+                        <button class="absolute bottom-0 right-0 bg-primary text-on-primary p-2 rounded-full shadow-lg hover:bg-primary-container" type="button">
+                            <span class="material-symbols-outlined text-[20px]">photo_camera</span>
+                        </button>
+                    </div>
+                    <div class="mt-stack-md">
+                        <h2 class="font-headline-sm text-headline-sm text-on-surface" th:text="${form.fullName}">Nhân viên</h2>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">Tài khoản nội bộ</p>
+                    </div>
+                    <div class="w-full h-[1px] bg-outline-variant my-stack-lg"></div>
+                    <div class="w-full flex flex-col gap-stack-md text-left">
+                        <div class="flex items-center gap-stack-sm"><span class="material-symbols-outlined text-on-surface-variant text-[20px]">work</span><span class="font-body-sm text-body-sm">Bộ phận vận hành vé</span></div>
+                        <div class="flex items-center gap-stack-sm"><span class="material-symbols-outlined text-on-surface-variant text-[20px]">history</span><span class="font-body-sm text-body-sm">Trạng thái: đang hoạt động</span></div>
+                    </div>
+                </section>
+                <section class="bg-surface-container-high/50 p-stack-lg rounded-xl border border-outline-variant">
+                    <h3 class="font-label-md text-label-md text-on-surface mb-stack-sm">Quyền hạn truy cập</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-surface-container-lowest px-3 py-1 rounded-lg text-label-sm font-label-sm border border-outline-variant">Vé chờ thanh toán</span>
+                        <span class="bg-surface-container-lowest px-3 py-1 rounded-lg text-label-sm font-label-sm border border-outline-variant">Tra cứu vé</span>
+                        <span class="bg-surface-container-lowest px-3 py-1 rounded-lg text-label-sm font-label-sm border border-outline-variant">Hồ sơ cá nhân</span>
+                    </div>
+                </section>
+            </aside>
+
+            <section class="lg:col-span-8">
+                <div class="bg-surface-container-lowest p-stack-lg md:p-10 rounded-xl shadow-sm border border-outline-variant">
+                    <div class="flex items-center justify-between mb-stack-lg">
+                        <h3 class="font-headline-sm text-headline-sm text-on-surface">Thông tin chi tiết</h3>
+                        <span class="text-primary font-label-md text-label-md flex items-center gap-1"><span class="material-symbols-outlined text-[18px]">edit</span> Cập nhật</span>
+                    </div>
+                    <form th:action="@{/staff/profile}" th:object="${form}" method="post" class="grid grid-cols-1 md:grid-cols-2 gap-stack-lg">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <div class="flex flex-col gap-2">
+                            <label class="font-label-md text-label-md text-on-surface">Họ tên</label>
+                            <input th:field="*{fullName}" class="w-full h-12 px-stack-md rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface-container-lowest font-body-md text-body-md outline-none">
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="font-label-md text-label-md text-on-surface">Số điện thoại</label>
+                            <input th:field="*{phone}" class="w-full h-12 px-stack-md rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface-container-lowest font-body-md text-body-md outline-none">
+                        </div>
+                        <div class="flex flex-col gap-2 md:col-span-2">
+                            <label class="font-label-md text-label-md text-on-surface">Email công việc</label>
+                            <input th:field="*{email}" type="email" class="w-full h-12 px-stack-md rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface-container-lowest font-body-md text-body-md outline-none">
+                        </div>
+                        <div class="flex flex-col gap-2 md:col-span-2">
+                            <label class="font-label-md text-label-md text-on-surface">Địa chỉ</label>
+                            <textarea th:field="*{address}" rows="3" class="w-full p-stack-md rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface-container-lowest font-body-md text-body-md outline-none"></textarea>
+                        </div>
+                        <div class="md:col-span-2 flex flex-col md:flex-row gap-stack-md mt-stack-lg pt-stack-lg border-t border-outline-variant">
+                            <button class="bg-primary text-on-primary px-stack-lg h-12 rounded-lg font-label-md text-label-md hover:opacity-90 shadow-md" type="submit">Lưu thay đổi</button>
+                            <button class="border border-outline text-primary px-stack-lg h-12 rounded-lg font-label-md text-label-md hover:bg-surface-container-low" type="button">Đổi mật khẩu</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="mt-stack-lg bg-surface-container-lowest p-stack-lg rounded-xl shadow-sm border border-outline-variant">
+                    <div class="flex items-center gap-2 mb-stack-md">
+                        <span class="material-symbols-outlined text-secondary">security</span>
+                        <h3 class="font-label-md text-label-md text-on-surface">Bảo mật tài khoản</h3>
+                    </div>
+                    <div class="flex justify-between items-center p-stack-md bg-surface rounded-lg">
+                        <div class="flex items-center gap-stack-md">
+                            <span class="material-symbols-outlined text-on-surface-variant">devices</span>
+                            <div><p class="font-body-md text-body-md text-on-surface">Thiết bị hiện tại</p><p class="font-label-sm text-label-sm text-on-surface-variant">Đang hoạt động</p></div>
+                        </div>
+                        <span class="bg-tertiary/10 text-tertiary px-2 py-1 rounded text-[10px] font-bold">HIỆN TẠI</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/staff-ui :: footer}"></footer>
+</body>
+</html>

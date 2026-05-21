@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title th:text="${loginTitle} + ' - Bus Ticket Pro'">Đăng nhập nội bộ - Bus Ticket Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: "#f6faff", surface: "#f6faff", "surface-container-lowest": "#ffffff",
+                        "surface-container": "#e6eff8", "surface-container-high": "#e0e9f2",
+                        "primary-container": "#004aad", "primary-fixed-dim": "#b0c6ff",
+                        primary: "#00357f", "on-primary": "#ffffff", "on-surface": "#141d23",
+                        "on-surface-variant": "#434653", secondary: "#8b5000",
+                        error: "#ba1a1a", "error-container": "#ffdad6",
+                        "on-error-container": "#93000a", outline: "#737784",
+                        "outline-variant": "#c3c6d5"
+                    },
+                    spacing: {"margin-mobile": "16px", "margin-desktop": "48px", "stack-lg": "24px", "stack-md": "16px", "stack-sm": "8px", base: "8px", "max-width": "1200px"},
+                    fontFamily: {sans: ["Be Vietnam Pro", "sans-serif"]}
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-background text-on-surface">
+<header class="bg-surface h-[72px] w-full sticky top-0 border-b border-outline-variant shadow-sm z-50">
+    <div class="flex items-center justify-between px-margin-mobile md:px-margin-desktop w-full max-w-[1200px] mx-auto h-full">
+        <a th:href="@{/}" class="text-xl font-bold text-primary tracking-tight">Bus Ticket Pro</a>
+        <div class="flex items-center gap-stack-sm text-on-surface-variant hover:text-primary transition-colors">
+            <span class="material-symbols-outlined">help</span>
+            <span class="hidden md:inline text-sm font-semibold">Hỗ trợ kỹ thuật</span>
+        </div>
+    </div>
+</header>
+<main class="flex-grow flex items-center justify-center py-margin-desktop px-margin-mobile">
+    <div class="w-full max-w-[480px]">
+        <div class="bg-surface-container-lowest rounded-xl shadow-[0px_4px_12px_rgba(0,0,0,0.05)] border border-outline-variant overflow-hidden">
+            <div class="bg-primary p-stack-lg flex flex-col items-center text-center">
+                <div class="bg-white/10 p-stack-md rounded-full mb-stack-md">
+                    <span class="material-symbols-outlined text-white text-[48px]" style="font-variation-settings: 'FILL' 1;" th:text="${loginIcon}">admin_panel_settings</span>
+                </div>
+                <h1 class="text-2xl leading-8 font-semibold text-white" th:text="${loginTitle}">Đăng nhập nhân viên</h1>
+                <p class="text-sm leading-5 text-primary-fixed-dim mt-1" th:text="${loginSubtitle}">Khu vực dành cho nhân viên được cấp quyền</p>
+            </div>
+            <form th:action="${loginAction}" th:object="${form}" method="post" class="p-stack-lg space-y-stack-lg" novalidate>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <input type="hidden" th:field="*{loginScope}">
+                <div th:if="${#fields.hasGlobalErrors()}" th:each="e:${#fields.globalErrors()}" class="bg-error-container border border-error/20 p-stack-md rounded-lg text-on-error-container text-sm" th:text="${e}"></div>
+                <div th:if="${param.error}" class="bg-error-container border border-error/20 p-stack-md rounded-lg text-on-error-container text-sm">Tên đăng nhập hoặc mật khẩu không đúng.</div>
+
+                <div class="space-y-base">
+                    <label class="text-sm font-semibold text-on-surface" for="username">Tên đăng nhập</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">person</span>
+                        <input th:field="*{username}" th:errorclass="border-error" class="w-full pl-10 pr-stack-md py-3 bg-white border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" id="username" placeholder="Nhập tên đăng nhập" type="text">
+                    </div>
+                    <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-error text-sm"></p>
+                </div>
+
+                <div class="space-y-base">
+                    <div class="flex justify-between items-center">
+                        <label class="text-sm font-semibold text-on-surface" for="password">Mật khẩu</label>
+                        <a class="text-xs font-semibold text-primary hover:underline" href="#">Quên mật khẩu?</a>
+                    </div>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">lock</span>
+                        <input th:field="*{password}" th:errorclass="border-error" class="w-full pl-10 pr-10 py-3 bg-white border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" id="password" placeholder="Nhập mật khẩu" type="password">
+                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline">visibility</span>
+                    </div>
+                    <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-error text-sm"></p>
+                </div>
+
+                <div class="bg-error-container/30 border border-error-container p-stack-md rounded-lg flex items-start gap-stack-sm">
+                    <span class="material-symbols-outlined text-error text-[20px]">security</span>
+                    <p class="text-sm leading-5 text-on-error-container">Vui lòng không chia sẻ tài khoản nội bộ.</p>
+                </div>
+                <button class="w-full bg-primary text-on-primary py-stack-md rounded-lg text-sm font-semibold hover:bg-primary-container active:opacity-80 shadow-sm" type="submit" th:text="${loginButton}">Đăng nhập</button>
+                <div class="text-center pt-stack-sm">
+                    <a class="inline-flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary" th:href="@{/}">
+                        <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                        Quay về trang chủ
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+<footer class="bg-surface-container w-full py-stack-lg border-t border-outline-variant">
+    <div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop w-full max-w-[1200px] mx-auto gap-stack-md">
+        <div class="text-center md:text-left">
+            <p class="text-xl font-semibold text-on-surface">Bus Ticket Pro</p>
+            <p class="text-sm text-on-surface-variant">© 2026 Bus Ticket Pro - Hệ thống nội bộ</p>
+        </div>
+        <nav class="flex flex-wrap justify-center gap-stack-lg">
+            <a class="text-sm text-on-surface-variant hover:text-secondary" href="#">Hướng dẫn nghiệp vụ</a>
+            <a class="text-sm text-on-surface-variant hover:text-secondary" href="#">Quy định thanh toán</a>
+            <a class="text-sm text-on-surface-variant hover:text-secondary" href="#">Hỗ trợ kỹ thuật</a>
+        </nav>
+    </div>
+</footer>
+</body>
+</html>

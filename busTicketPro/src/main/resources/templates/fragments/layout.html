@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<nav th:fragment="nav" class="navbar navbar-expand-lg bg-white">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" th:href="@{/}">Bus Ticket Pro</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="nav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" th:href="@{/trips/search}">Tìm chuyến</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/tickets/lookup}">Tra cứu vé</a></li>
+                <li class="nav-item" sec:authorize="hasAnyRole('STAFF','ADMIN')"><a class="nav-link" th:href="@{/staff}">Staff</a></li>
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a class="nav-link" th:href="@{/admin}">Admin</a></li>
+                <li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link" th:href="@{/profile}">Hồ sơ</a></li>
+            </ul>
+            <div class="d-flex gap-2 align-items-center">
+                <span sec:authorize="isAuthenticated()" class="text-muted small">
+                    <span sec:authentication="name"></span> -
+                    <span sec:authentication="principal.authorities"></span>
+                </span>
+                <a sec:authorize="isAnonymous()" class="btn btn-outline-primary btn-sm" th:href="@{/login}">Đăng nhập</a>
+                <a sec:authorize="isAnonymous()" class="btn btn-primary btn-sm" th:href="@{/register}">Đăng ký</a>
+                <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button class="btn btn-outline-secondary btn-sm">Đăng xuất</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+<div th:fragment="messages" th:if="${success != null or error != null}" class="position-fixed top-0 end-0 p-3" style="z-index: 1100; margin-top: 72px; max-width: 360px;">
+    <style>
+        .app-toast { animation: app-toast-out 0.25s ease-in forwards; animation-delay: 2s; }
+        @keyframes app-toast-out { to { opacity: 0; transform: translateX(16px); visibility: hidden; } }
+    </style>
+    <div th:if="${success}" class="app-toast alert alert-success shadow" th:text="${success}"></div>
+    <div th:if="${error}" class="app-toast alert alert-danger shadow" th:text="${error}"></div>
+</div>
+<footer th:fragment="footer" class="text-center text-muted py-4">Bus Ticket Pro - Java Web Application</footer>
+</body>
+</html>

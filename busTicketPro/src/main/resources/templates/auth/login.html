@@ -1,0 +1,70 @@
+<!doctype html>
+<html class="light" lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/public-ui :: head('Đăng nhập - Bus Ticket Pro')}"></head>
+<body class="bg-surface text-on-surface">
+<header class="fixed top-0 w-full h-[72px] z-50 bg-surface shadow-sm">
+    <div class="max-w-[1200px] mx-auto h-full flex items-center justify-between px-margin-mobile md:px-margin-desktop">
+        <a class="text-headline-md font-bold text-primary" th:href="@{/}">Bus Ticket Pro</a>
+        <a th:href="@{/register}" class="font-label-md text-label-md text-primary font-semibold hover:text-on-primary-fixed-variant transition-colors">Đăng ký</a>
+    </div>
+</header>
+<main class="min-h-screen pt-[72px] flex flex-col items-center justify-center px-margin-mobile relative overflow-hidden">
+    <div class="absolute top-0 right-0 -z-10 w-1/2 h-full opacity-10 pointer-events-none">
+        <img alt="Bus background" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=1400&q=80">
+    </div>
+    <div class="w-full max-w-[480px] bg-surface-container-lowest rounded-xl p-8 shadow-[0px_4px_12px_rgba(0,0,0,0.05)] border border-outline-variant relative z-10">
+        <div class="flex flex-col items-center mb-8">
+            <span class="material-symbols-outlined text-primary text-[48px] mb-2" style="font-variation-settings:'FILL' 1;">directions_bus</span>
+            <h1 class="font-headline-md text-headline-md text-primary font-bold">Bus Ticket Pro</h1>
+        </div>
+        <div class="text-center mb-8">
+            <h2 class="font-headline-sm text-headline-sm text-on-surface mb-2">Đăng nhập tài khoản hành khách</h2>
+            <p class="font-body-md text-body-md text-on-surface-variant">Đăng nhập để đặt vé, quản lý vé và cập nhật hồ sơ cá nhân.</p>
+        </div>
+        <div th:if="${param.logout}" class="rounded-lg border border-[#8bbf91] bg-[#eaf7ed] px-4 py-3 text-[#185321] font-body-sm mb-stack-md">Bạn đã đăng xuất</div>
+        <form th:action="@{/login}" th:object="${form}" method="post" class="space-y-stack-lg" novalidate>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <input type="hidden" th:field="*{loginScope}">
+            <div th:if="${#fields.hasGlobalErrors()}" th:each="e:${#fields.globalErrors()}" class="rounded-lg border border-error bg-error-container px-4 py-3 text-on-error-container font-body-sm" th:text="${e}"></div>
+            <div th:if="${param.error}" class="rounded-lg border border-error bg-error-container px-4 py-3 text-on-error-container font-body-sm">Sai tài khoản hoặc mật khẩu</div>
+
+            <div class="space-y-2">
+                <label class="font-label-md text-label-md text-on-surface" for="username">Tên đăng nhập</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">person</span>
+                    <input th:field="*{username}" th:errorclass="border-error" class="w-full pl-10 pr-4 py-3 bg-surface border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-body-md text-body-md" id="username" placeholder="Nhập tên đăng nhập" type="text">
+                </div>
+                <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-error text-sm"></p>
+            </div>
+
+            <div class="space-y-2">
+                <label class="font-label-md text-label-md text-on-surface" for="password">Mật khẩu</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">lock</span>
+                    <input th:field="*{password}" th:errorclass="border-error" class="w-full pl-10 pr-10 py-3 bg-surface border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-body-md text-body-md" id="password" placeholder="••••••••" type="password">
+                    <button class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface" type="button" onclick="togglePassword('password')"><span class="material-symbols-outlined">visibility</span></button>
+                </div>
+                <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-error text-sm"></p>
+            </div>
+
+            <div class="flex items-center justify-between">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input class="w-4 h-4 text-primary border-outline-variant rounded focus:ring-primary" type="checkbox" name="remember-me">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">Ghi nhớ đăng nhập</span>
+                </label>
+                <a class="font-label-sm text-label-sm text-primary hover:underline" href="#">Quên mật khẩu?</a>
+            </div>
+            <button class="w-full bg-primary text-on-primary py-3 px-stack-lg rounded-lg font-headline-sm text-[16px] hover:opacity-95 active:scale-[0.98]" type="submit">Đăng nhập</button>
+        </form>
+        <div class="mt-8 space-y-4 text-center">
+            <p class="font-body-sm text-body-sm text-on-surface-variant">Chưa có tài khoản? <a class="text-primary font-semibold hover:underline" th:href="@{/register}">Đăng ký</a></p>
+            <div class="flex items-center gap-4 py-2"><div class="h-px bg-outline-variant flex-1"></div><span class="text-label-sm font-label-sm text-outline uppercase tracking-wider">Hoặc</span><div class="h-px bg-outline-variant flex-1"></div></div>
+            <a class="inline-block font-label-md text-label-md text-primary hover:bg-primary-fixed px-stack-lg py-2 rounded-lg border border-primary" th:href="@{/tickets/lookup}">Tra cứu vé không cần đăng nhập</a>
+            <p class="font-label-sm text-label-sm text-outline italic pt-4">Dành cho hành khách đặt vé xe khách liên tỉnh.</p>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/public-ui :: footer}"></footer>
+<script>function togglePassword(id){const input=document.getElementById(id);input.type=input.type==='password'?'text':'password';}</script>
+</body>
+</html>

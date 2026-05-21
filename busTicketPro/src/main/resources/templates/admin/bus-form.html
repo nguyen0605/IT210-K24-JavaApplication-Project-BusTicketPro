@@ -1,0 +1,94 @@
+<!doctype html>
+<html class="light" lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/admin-ui :: head(${busId == null ? 'Thêm xe - Bus Ticket Pro' : 'Sửa xe - Bus Ticket Pro'})}"></head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col">
+<header th:replace="~{fragments/admin-ui :: nav('buses')}"></header>
+<main class="pt-[96px] pb-stack-lg px-margin-mobile md:px-margin-desktop max-w-[1200px] mx-auto w-full flex-grow">
+    <div th:replace="~{fragments/admin-ui :: messages}"></div>
+
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-stack-md mb-stack-lg">
+        <div>
+            <nav class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm mb-2">
+                <a class="hover:text-primary" th:href="@{/admin/buses}">Danh mục xe</a>
+                <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                <span class="text-on-surface" th:text="${busId == null ? 'Thêm xe' : 'Sửa xe'}">Thêm xe</span>
+            </nav>
+            <h1 class="font-headline-lg text-headline-lg text-on-surface" th:text="${busId == null ? 'Thêm xe mới' : 'Cập nhật thông tin xe'}">Thêm xe mới</h1>
+            <p class="font-body-md text-body-md text-on-surface-variant">Nhập thông tin xe vận hành trong hệ thống Bus Ticket Pro.</p>
+        </div>
+        <a th:href="@{/admin/buses}" class="inline-flex items-center gap-2 border border-outline text-primary px-5 py-3 rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-all">
+            <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+            Quay lại
+        </a>
+    </div>
+
+    <section class="bg-surface-container-lowest rounded-xl shadow-[0px_4px_12px_rgba(0,0,0,0.05)] border border-outline-variant overflow-hidden">
+        <div class="bg-surface-container-high px-stack-lg py-stack-md border-b border-outline-variant">
+            <h2 class="font-headline-sm text-headline-sm text-primary">Thông tin xe</h2>
+        </div>
+        <form th:action="${busId == null} ? @{/admin/buses} : @{/admin/buses/{id}(id=${busId})}" th:object="${form}" method="post" class="p-stack-lg md:p-8 space-y-stack-lg" novalidate>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <div th:if="${#fields.hasGlobalErrors()}" th:each="e:${#fields.globalErrors()}" class="rounded-lg border border-error bg-error-container px-4 py-3 text-on-error-container font-body-sm" th:text="${e}"></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-lg">
+                <div class="flex flex-col gap-2">
+                    <label class="font-label-md text-label-md text-on-surface" for="licensePlate">Biển số xe</label>
+                    <input th:field="*{licensePlate}" th:errorclass="border-error" id="licensePlate" class="w-full h-12 px-stack-md rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none font-body-md text-body-md" placeholder="VD: 29B-123.45" type="text">
+                    <p th:if="${#fields.hasErrors('licensePlate')}" th:errors="*{licensePlate}" class="text-error text-sm"></p>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="font-label-md text-label-md text-on-surface" for="busType">Loại xe</label>
+                    <input th:field="*{busType}" th:errorclass="border-error" id="busType" class="w-full h-12 px-stack-md rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none font-body-md text-body-md" placeholder="VD: Limousine 22 phòng" type="text">
+                    <p th:if="${#fields.hasErrors('busType')}" th:errors="*{busType}" class="text-error text-sm"></p>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="font-label-md text-label-md text-on-surface" for="totalSeats">Tổng số ghế</label>
+                    <input th:field="*{totalSeats}" th:errorclass="border-error" id="totalSeats" class="w-full h-12 px-stack-md rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none font-body-md text-body-md" placeholder="VD: 34" type="number" min="1" max="80">
+                    <p th:if="${#fields.hasErrors('totalSeats')}" th:errors="*{totalSeats}" class="text-error text-sm"></p>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="font-label-md text-label-md text-on-surface" for="companyName">Hãng xe</label>
+                    <input th:field="*{companyName}" th:errorclass="border-error" id="companyName" class="w-full h-12 px-stack-md rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none font-body-md text-body-md" placeholder="VD: Thaco Bluesky" type="text">
+                    <p th:if="${#fields.hasErrors('companyName')}" th:errors="*{companyName}" class="text-error text-sm"></p>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-center justify-between gap-3">
+                        <label class="font-label-md text-label-md text-on-surface" for="driverId">Tài xế phụ trách</label>
+                        <a th:href="@{/admin/drivers/create}" class="text-primary text-label-sm font-label-sm hover:underline">Thêm tài xế</a>
+                    </div>
+                    <select th:field="*{driverId}" th:errorclass="border-error" id="driverId" class="w-full h-12 px-stack-md rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none font-body-md text-body-md">
+                        <option value="">Chọn tài xế đang hoạt động</option>
+                        <option th:each="d : ${drivers}" th:value="${d.id}" th:text="${d.fullName + ' - ' + d.phone + ' - Bằng ' + d.licenseClass}"></option>
+                    </select>
+                    <p th:if="${#fields.hasErrors('driverId')}" th:errors="*{driverId}" class="text-error text-sm"></p>
+                    <p th:if="${#lists.isEmpty(drivers)}" class="text-secondary text-sm">Chưa có tài xế đang hoạt động. Hãy thêm tài xế trước khi gán xe.</p>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="font-label-md text-label-md text-on-surface" for="status">Trạng thái</label>
+                    <select th:field="*{status}" th:errorclass="border-error" id="status" class="w-full h-12 px-stack-md rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none font-body-md text-body-md">
+                        <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.name() == 'ACTIVE' ? 'Đang hoạt động' : (s.name() == 'MAINTENANCE' ? 'Bảo trì' : 'Ngưng hoạt động')}"></option>
+                    </select>
+                    <p th:if="${#fields.hasErrors('status')}" th:errors="*{status}" class="text-error text-sm"></p>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-stack-md pt-stack-lg border-t border-outline-variant">
+                <button class="inline-flex items-center justify-center gap-2 bg-primary text-on-primary px-stack-lg h-12 rounded-lg font-label-md text-label-md hover:opacity-90 active:scale-[0.98] shadow-sm" type="submit">
+                    <span class="material-symbols-outlined text-[20px]">save</span>
+                    Lưu thông tin
+                </button>
+                <a th:href="@{/admin/buses}" class="inline-flex items-center justify-center gap-2 border border-outline text-primary px-stack-lg h-12 rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-all">
+                    Hủy
+                </a>
+            </div>
+        </form>
+    </section>
+</main>
+<footer th:replace="~{fragments/admin-ui :: footer}"></footer>
+</body>
+</html>

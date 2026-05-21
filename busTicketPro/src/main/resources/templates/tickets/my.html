@@ -1,0 +1,115 @@
+<!doctype html>
+<html class="light" lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/public-ui :: head('Vé của tôi - Bus Ticket Pro')}"></head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col">
+<header th:replace="~{fragments/public-ui :: nav('my-tickets')}"></header>
+<main class="flex-grow pt-[104px] pb-stack-lg px-margin-mobile md:px-margin-desktop max-w-[1200px] mx-auto w-full">
+    <div th:replace="~{fragments/public-ui :: messages}"></div>
+
+    <section class="mb-stack-lg">
+        <h1 class="font-headline-lg text-headline-lg text-primary mb-stack-sm">Vé của tôi</h1>
+        <p class="font-body-md text-body-md text-on-surface-variant">
+            Danh sách vé đã đặt bằng tài khoản hiện tại. Bạn có thể lọc nhanh theo điểm đi và điểm đến.
+        </p>
+    </section>
+
+    <form th:action="@{/tickets/my}" method="get" class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-stack-lg mb-stack-lg grid grid-cols-1 md:grid-cols-4 gap-stack-md items-end">
+        <div class="space-y-2">
+            <label class="block font-label-md text-label-md text-on-surface" for="departureId">Điểm đi</label>
+            <select id="departureId" name="departureId" class="w-full border-outline-variant rounded-lg font-body-md text-body-md focus:ring-primary focus:border-primary">
+                <option value="">Tất cả</option>
+                <option th:each="l : ${locations}" th:value="${l.id}" th:selected="${departureId == l.id}" th:text="${l.name}">Hà Nội</option>
+            </select>
+        </div>
+        <div class="space-y-2">
+            <label class="block font-label-md text-label-md text-on-surface" for="arrivalId">Điểm đến</label>
+            <select id="arrivalId" name="arrivalId" class="w-full border-outline-variant rounded-lg font-body-md text-body-md focus:ring-primary focus:border-primary">
+                <option value="">Tất cả</option>
+                <option th:each="l : ${locations}" th:value="${l.id}" th:selected="${arrivalId == l.id}" th:text="${l.name}">Hải Phòng</option>
+            </select>
+        </div>
+        <button class="bg-primary text-on-primary py-3 px-6 rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-primary-container" type="submit">
+            <span class="material-symbols-outlined text-[20px]">search</span>
+            Tìm vé
+        </button>
+        <a th:href="@{/tickets/my}" class="border border-outline text-primary py-3 px-6 rounded-lg font-label-md text-label-md flex items-center justify-center hover:bg-primary-fixed">Reset</a>
+    </form>
+
+    <section th:if="${#lists.isEmpty(tickets)}" class="bg-surface-container-low rounded-xl border border-dashed border-outline-variant p-stack-lg text-center">
+        <span class="material-symbols-outlined text-[56px] text-outline mb-stack-md">confirmation_number</span>
+        <h2 class="font-headline-sm text-headline-sm text-on-surface">Không tìm thấy vé phù hợp</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant mt-2 mb-stack-md">
+            Hãy thử đổi điểm đi, điểm đến hoặc tìm chuyến xe mới để đặt vé.
+        </p>
+        <a th:href="@{/trips/search}" class="inline-flex items-center gap-2 bg-primary text-on-primary px-stack-lg py-3 rounded-lg font-label-md text-label-md">
+            <span class="material-symbols-outlined text-[20px]">search</span>
+            Tìm chuyến xe
+        </a>
+    </section>
+
+    <section th:if="${!#lists.isEmpty(tickets)}" class="space-y-stack-md">
+        <article th:each="ticket : ${tickets}" class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+            <div class="p-stack-lg flex flex-col lg:flex-row gap-gutter">
+                <div class="flex-1">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-stack-sm mb-stack-md">
+                        <div>
+                            <p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Mã vé</p>
+                            <p class="font-headline-sm text-headline-sm text-primary" th:text="${ticket.ticketCode}">BT0000</p>
+                        </div>
+                        <span th:class="${ticket.status.name() == 'PENDING'} ? 'px-stack-md py-1 bg-secondary-fixed text-on-secondary-fixed-variant font-label-sm text-label-sm rounded-full w-fit' : (${ticket.status.name() == 'PAID'} ? 'px-stack-md py-1 bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm rounded-full w-fit' : 'px-stack-md py-1 bg-error-container text-on-error-container font-label-sm text-label-sm rounded-full w-fit')"
+                              th:text="${ticket.status.name() == 'PENDING' ? 'Chờ thanh toán' : (ticket.status.name() == 'PAID' ? 'Đã thanh toán' : 'Đã hủy')}">Chờ thanh toán</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+                        <div class="space-y-1">
+                            <p class="font-label-sm text-label-sm text-outline">Tuyến xe</p>
+                            <p class="font-body-md text-body-md font-semibold">
+                                <span th:text="${ticket.trip.route.departure.name}">Hà Nội</span>
+                                <span class="text-outline">→</span>
+                                <span th:text="${ticket.trip.route.arrival.name}">Hải Phòng</span>
+                            </p>
+                        </div>
+                        <div class="space-y-1">
+                            <p class="font-label-sm text-label-sm text-outline">Khởi hành</p>
+                            <p class="font-body-md text-body-md font-semibold" th:text="${#temporals.format(ticket.trip.departureTime,'HH:mm, dd/MM/yyyy')}">08:00</p>
+                        </div>
+                        <div class="space-y-1">
+                            <p class="font-label-sm text-label-sm text-outline">Xe</p>
+                            <p class="font-body-md text-body-md font-semibold">
+                                <span th:text="${ticket.trip.bus.licensePlate}">29B-12345</span>
+                                -
+                                <span th:text="${ticket.trip.bus.busType}">Limousine</span>
+                            </p>
+                        </div>
+                        <div class="space-y-1">
+                            <p class="font-label-sm text-label-sm text-outline">Ghế</p>
+                            <p class="font-body-md text-body-md font-semibold">
+                                <span th:text="${ticket.seat.seatNumber}">A01</span>
+                                (<span th:text="${ticket.seat.seatFloor.name() == 'UPPER' ? 'Tầng trên' : (ticket.seat.seatFloor.name() == 'LOWER' ? 'Tầng dưới' : 'Thường')}">Tầng dưới</span>)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:w-[240px] flex flex-col justify-between gap-stack-md border-t lg:border-t-0 lg:border-l border-outline-variant pt-stack-md lg:pt-0 lg:pl-gutter">
+                    <div>
+                        <p class="font-label-sm text-label-sm text-outline">Tổng tiền</p>
+                        <p class="font-headline-sm text-headline-sm text-secondary" th:text="${#numbers.formatDecimal(ticket.totalAmount,0,'COMMA',0,'POINT')} + 'đ'">0đ</p>
+                    </div>
+                    <form th:action="@{/tickets/lookup}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <input type="hidden" name="ticketCode" th:value="${ticket.ticketCode}">
+                        <input type="hidden" name="passengerPhone" th:value="${ticket.passengerPhone}">
+                        <button class="w-full bg-primary text-on-primary py-3 rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-primary-container" type="submit">
+                            <span class="material-symbols-outlined text-[20px]">visibility</span>
+                            Xem chi tiết
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </article>
+    </section>
+</main>
+<footer th:replace="~{fragments/public-ui :: footer}"></footer>
+</body>
+</html>

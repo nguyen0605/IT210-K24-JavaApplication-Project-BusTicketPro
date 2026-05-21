@@ -1,0 +1,72 @@
+<!doctype html>
+<html class="light" lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/public-ui :: head('Đặt vé thành công - Bus Ticket Pro')}"></head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<header th:replace="~{fragments/public-ui :: nav('tickets')}"></header>
+<main class="flex-grow pt-[100px] pb-stack-lg px-margin-mobile md:px-margin-desktop">
+    <div class="max-w-[880px] mx-auto">
+        <section class="bg-surface-container-lowest rounded-xl p-stack-lg shadow-[0px_4px_12px_rgba(0,0,0,0.05)] text-center mb-gutter border border-outline-variant">
+            <div class="w-20 h-20 bg-tertiary-container rounded-full flex items-center justify-center mx-auto mb-stack-md">
+                <span class="material-symbols-outlined text-tertiary-fixed-dim text-[48px]" style="font-variation-settings:'FILL' 1;">check_circle</span>
+            </div>
+            <h1 class="font-headline-lg text-headline-lg text-primary mb-stack-sm">Đặt vé thành công</h1>
+            <p class="font-body-lg text-body-lg text-on-surface-variant">Vé của bạn đang chờ thanh toán.</p>
+        </section>
+
+        <section class="bg-white rounded-xl shadow-[0px_4px_12px_rgba(0,0,0,0.05)] border border-outline-variant overflow-hidden">
+            <div class="bg-primary text-on-primary p-stack-lg text-center">
+                <p class="font-label-md text-label-md uppercase tracking-wide opacity-80 mb-2">Mã vé cần lưu lại để tra cứu</p>
+                <div class="inline-flex items-center gap-stack-md bg-white text-primary px-stack-lg py-stack-md rounded-lg shadow-sm">
+                    <span id="ticketCodeText" class="font-headline-lg text-headline-lg font-bold tracking-wide" th:text="${ticketCode}">BT000000</span>
+                    <button class="material-symbols-outlined p-2 rounded-lg hover:bg-primary-fixed" type="button" onclick="navigator.clipboard?.writeText(document.getElementById('ticketCodeText').textContent.trim())" title="Sao chép mã vé">content_copy</button>
+                </div>
+                <p class="font-body-sm text-body-sm mt-stack-sm opacity-90">Bạn cũng có thể tra cứu nhanh bằng số điện thoại đã đặt vé.</p>
+            </div>
+
+            <div class="p-stack-lg grid grid-cols-1 md:grid-cols-2 gap-gutter relative" th:if="${ticket != null}">
+                <div class="hidden md:block absolute left-1/2 top-stack-lg bottom-stack-lg w-px bg-outline-variant"></div>
+                <div class="space-y-stack-md">
+                    <h3 class="font-label-md text-label-md text-primary uppercase">Thông tin hành trình</h3>
+                    <div class="flex items-start gap-stack-md">
+                        <div class="flex flex-col items-center pt-1"><div class="w-3 h-3 rounded-full border-2 border-primary bg-white"></div><div class="w-0.5 h-12 bg-outline-variant"></div><div class="w-3 h-3 rounded-full bg-primary"></div></div>
+                        <div class="flex flex-col gap-4">
+                            <div><p class="font-headline-sm text-headline-sm text-on-surface" th:text="${ticket.trip.route.departure.name}"></p><p class="font-body-sm text-body-sm text-on-surface-variant">Điểm khởi hành</p></div>
+                            <div><p class="font-headline-sm text-headline-sm text-on-surface" th:text="${ticket.trip.route.arrival.name}"></p><p class="font-body-sm text-body-sm text-on-surface-variant">Điểm đến</p></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-gutter">
+                    <h3 class="font-label-md text-label-md text-primary uppercase">Chi tiết đặt vé</h3>
+                    <div class="grid grid-cols-2 gap-stack-md">
+                        <div><p class="font-label-sm text-label-sm text-outline">Hành khách</p><p class="font-body-md text-body-md font-semibold text-on-surface" th:text="${ticket.passengerName}"></p></div>
+                        <div><p class="font-label-sm text-label-sm text-outline">Số điện thoại</p><p class="font-body-md text-body-md font-semibold text-on-surface" th:text="${ticket.passengerPhone}"></p></div>
+                        <div><p class="font-label-sm text-label-sm text-outline">Khởi hành</p><p class="font-body-md text-body-md font-semibold text-on-surface" th:text="${#temporals.format(ticket.trip.departureTime,'HH:mm, dd/MM/yyyy')}"></p></div>
+                        <div><p class="font-label-sm text-label-sm text-outline">Ghế</p><p class="font-body-md text-body-md font-semibold text-on-surface"><span th:text="${ticket.seat.seatNumber}"></span> (<span th:text="${ticket.seat.seatFloor.name() == 'UPPER' ? 'Tầng trên' : (ticket.seat.seatFloor.name() == 'LOWER' ? 'Tầng dưới' : 'Thường')}"></span>)</p></div>
+                        <div><p class="font-label-sm text-label-sm text-outline">Xe</p><p class="font-body-md text-body-md font-semibold text-on-surface"><span th:text="${ticket.trip.bus.licensePlate}"></span> - <span th:text="${ticket.trip.bus.busType}"></span></p></div>
+                        <div><p class="font-label-sm text-label-sm text-outline">Tổng thanh toán</p><p class="font-headline-sm text-headline-sm font-bold text-secondary" th:text="${#numbers.formatDecimal(ticket.totalAmount,0,'COMMA',0,'POINT')} + 'đ'"></p></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-stack-lg bg-surface-container-low border-t border-outline-variant">
+                <div th:if="${ticket != null}" class="flex flex-col sm:flex-row gap-stack-md justify-center">
+                    <form th:action="@{/tickets/lookup}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <input type="hidden" name="ticketCode" th:value="${ticket.ticketCode}">
+                    <input type="hidden" name="passengerPhone" th:value="${ticket.passengerPhone}">
+                    <button class="bg-secondary-container text-on-secondary-container px-gutter py-3 rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 hover:opacity-90 active:scale-95" type="submit"><span class="material-symbols-outlined text-[20px]">search</span>Xem chi tiết vé</button>
+                    </form>
+                    <a th:href="@{/}" class="border border-primary text-primary px-gutter py-3 rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-primary-fixed"><span class="material-symbols-outlined text-[20px]">home</span>Về trang chủ</a>
+                </div>
+            </div>
+        </section>
+
+        <div class="mt-gutter grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+            <div class="bg-surface-container-high p-stack-md rounded-xl flex items-center gap-stack-md"><span class="material-symbols-outlined text-primary text-[32px]">info</span><p class="font-body-sm text-body-sm text-on-surface-variant">Vui lòng thanh toán trong vòng <b>30 phút</b> để giữ chỗ của bạn.</p></div>
+            <div class="bg-surface-container-high p-stack-md rounded-xl flex items-center gap-stack-md"><span class="material-symbols-outlined text-primary text-[32px]">confirmation_number</span><p class="font-body-sm text-body-sm text-on-surface-variant">Nếu cần tra cứu lại, dùng <b>mã vé</b> và <b>số điện thoại</b> trên màn hình này.</p></div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/public-ui :: footer}"></footer>
+</body>
+</html>

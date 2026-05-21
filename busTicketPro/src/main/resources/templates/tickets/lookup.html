@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/public-ui :: head('Tra cứu vé - Bus Ticket Pro')}"></head>
+<body class="bg-background text-on-surface">
+<header th:replace="~{fragments/public-ui :: nav('tickets')}"></header>
+<main class="pt-[104px] pb-stack-lg px-margin-mobile md:px-margin-desktop max-w-[1200px] mx-auto">
+    <div th:replace="~{fragments/public-ui :: messages}"></div>
+    <section class="mb-stack-lg">
+        <h1 class="font-headline-lg text-headline-lg text-primary mb-stack-sm">Tra cứu vé</h1>
+        <p class="font-body-md text-body-md text-on-surface-variant">Nhập mã vé và số điện thoại đã đặt vé để xem đầy đủ thông tin hành trình.</p>
+    </section>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+        <aside class="lg:col-span-4 space-y-gutter">
+            <div class="bg-surface-container-lowest p-stack-lg rounded-lg shadow-[0px_4px_12px_rgba(0,0,0,0.05)] border border-outline-variant/30">
+                <form th:action="@{/tickets/lookup}" th:object="${form}" method="post" class="space-y-stack-md">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <div>
+                        <label class="block font-label-md text-label-md text-on-surface mb-stack-sm" for="ticketCode">Mã vé</label>
+                        <input th:field="*{ticketCode}" id="ticketCode" class="w-full px-stack-md py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none font-body-md" placeholder="Ví dụ: BT1710000000000" type="text" required>
+                    </div>
+                    <div>
+                        <label class="block font-label-md text-label-md text-on-surface mb-stack-sm" for="passengerPhone">Số điện thoại</label>
+                        <input th:field="*{passengerPhone}" id="passengerPhone" class="w-full px-stack-md py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none font-body-md" placeholder="Số điện thoại đã đặt vé" type="tel" required>
+                    </div>
+                    <button class="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded-lg active:scale-95 flex items-center justify-center gap-stack-sm" type="submit"><span class="material-symbols-outlined text-[20px]">search</span>Tra cứu vé</button>
+                </form>
+            </div>
+            <div class="flex gap-stack-sm items-start p-stack-md bg-primary-fixed/30 rounded-lg">
+                <span class="material-symbols-outlined text-primary text-[20px]">info</span>
+                <p class="font-body-sm text-body-sm text-on-primary-fixed-variant">Sau khi đặt vé, mã vé được hiển thị rất lớn ở màn hình thành công. Hãy lưu mã vé hoặc dùng nút sao chép.</p>
+            </div>
+        </aside>
+
+        <section class="lg:col-span-8 space-y-gutter">
+            <div th:if="${ticket == null}" class="bg-surface-container-low rounded-xl border border-dashed border-outline-variant p-stack-lg text-center">
+                <span class="material-symbols-outlined text-[56px] text-outline mb-stack-md">confirmation_number</span>
+                <h2 class="font-headline-sm text-headline-sm text-on-surface">Chưa có dữ liệu vé</h2>
+                <p class="font-body-md text-body-md text-on-surface-variant mt-2">Nhập mã vé và số điện thoại để tra cứu.</p>
+            </div>
+
+            <div th:if="${ticket != null}" class="bg-surface-container-lowest rounded-lg shadow-[0px_4px_12px_rgba(0,0,0,0.05)] overflow-hidden border border-outline-variant/30">
+                <div class="bg-surface-container px-stack-lg py-stack-md flex flex-col md:flex-row justify-between md:items-center gap-stack-sm border-b border-outline-variant/20">
+                    <div class="flex items-center gap-stack-md"><span class="font-label-md text-label-md text-on-surface-variant">Mã vé:</span><span class="font-headline-sm text-headline-sm text-primary" th:text="${ticket.ticketCode}"></span></div>
+                    <span th:class="${ticket.status.name() == 'PENDING'} ? 'px-stack-md py-1 bg-secondary-fixed text-on-secondary-fixed-variant font-label-sm text-label-sm rounded-full w-fit' : (${ticket.status.name() == 'PAID'} ? 'px-stack-md py-1 bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm rounded-full w-fit' : 'px-stack-md py-1 bg-error-container text-on-error-container font-label-sm text-label-sm rounded-full w-fit')"
+                          th:text="${ticket.status.name() == 'PENDING' ? 'Chờ thanh toán' : (ticket.status.name() == 'PAID' ? 'Đã thanh toán' : 'Đã hủy')}"></span>
+                </div>
+
+                <div class="p-stack-lg">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-lg">
+                        <div>
+                            <h3 class="font-label-md text-label-md text-primary uppercase tracking-wider mb-stack-md flex items-center gap-2"><span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">person</span>Thông tin hành khách</h3>
+                            <div class="space-y-stack-sm">
+                                <div class="flex justify-between gap-4"><span class="text-on-surface-variant font-body-sm">Họ và tên:</span><span class="text-on-surface font-label-md text-right" th:text="${ticket.passengerName}"></span></div>
+                                <div class="flex justify-between gap-4"><span class="text-on-surface-variant font-body-sm">Số điện thoại:</span><span class="text-on-surface font-label-md text-right" th:text="${ticket.passengerPhone}"></span></div>
+                                <div class="flex justify-between gap-4"><span class="text-on-surface-variant font-body-sm">Email:</span><span class="text-on-surface font-label-md text-right" th:text="${ticket.passengerEmail ?: '-'}"></span></div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-label-md text-label-md text-primary uppercase tracking-wider mb-stack-md flex items-center gap-2"><span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">directions_bus</span>Thông tin xe</h3>
+                            <div class="space-y-stack-sm">
+                                <div class="flex justify-between gap-4"><span class="text-on-surface-variant font-body-sm">Biển số xe:</span><span class="text-on-surface font-label-md text-right" th:text="${ticket.trip.bus.licensePlate}"></span></div>
+                                <div class="flex justify-between gap-4"><span class="text-on-surface-variant font-body-sm">Loại xe:</span><span class="text-on-surface font-label-md text-right" th:text="${ticket.trip.bus.busType}"></span></div>
+                                <div class="flex justify-between gap-4"><span class="text-on-surface-variant font-body-sm">Tài xế:</span><span class="text-on-surface font-label-md text-right" th:text="${ticket.trip.bus.driverName ?: '-'}"></span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="my-stack-lg border-t border-dashed border-outline-variant"></div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-lg">
+                        <div>
+                            <h3 class="font-label-md text-label-md text-primary uppercase tracking-wider mb-stack-md flex items-center gap-2"><span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">route</span>Tuyến đường</h3>
+                            <div class="space-y-stack-sm">
+                                <div class="flex justify-between gap-4"><span class="text-on-surface-variant font-body-sm">Tuyến xe:</span><span class="text-on-surface font-label-md text-right"><span th:text="${ticket.trip.route.departure.name}"></span> → <span th:text="${ticket.trip.route.arrival.name}"></span></span></div>
+                                <div class="flex justify-between gap-4"><span class="text-on-surface-variant font-body-sm">Giờ khởi hành:</span><span class="text-on-surface font-label-md text-right" th:text="${#temporals.format(ticket.trip.departureTime,'HH:mm')}"></span></div>
+                                <div class="flex justify-between gap-4"><span class="text-on-surface-variant font-body-sm">Ngày đi:</span><span class="text-on-surface font-label-md text-right" th:text="${#temporals.format(ticket.trip.departureTime,'dd/MM/yyyy')}"></span></div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-label-md text-label-md text-primary uppercase tracking-wider mb-stack-md flex items-center gap-2"><span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">event_seat</span>Ghế & Thanh toán</h3>
+                            <div class="space-y-stack-sm">
+                                <div class="flex justify-between"><span class="text-on-surface-variant font-body-sm">Số ghế:</span><span class="text-on-surface font-label-md" th:text="${ticket.seat.seatNumber}"></span></div>
+                                <div class="flex justify-between"><span class="text-on-surface-variant font-body-sm">Tầng:</span><span class="text-on-surface font-label-md" th:text="${ticket.seat.seatFloor.name() == 'UPPER' ? 'Tầng trên' : (ticket.seat.seatFloor.name() == 'LOWER' ? 'Tầng dưới' : 'Thường')}"></span></div>
+                                <div class="flex justify-between"><span class="text-on-surface-variant font-body-sm">Trạng thái:</span><span class="font-label-md" th:text="${ticket.status.name() == 'PENDING' ? 'Chờ thanh toán' : (ticket.status.name() == 'PAID' ? 'Đã thanh toán' : 'Đã hủy')}"></span></div>
+                                <div class="flex justify-between"><span class="text-on-surface-variant font-body-sm">Tổng cộng:</span><span class="font-headline-sm text-headline-sm text-secondary" th:text="${#numbers.formatDecimal(ticket.totalAmount,0,'COMMA',0,'POINT')} + 'đ'"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-surface-container-low px-stack-lg py-stack-md flex flex-wrap gap-stack-md justify-end border-t border-outline-variant/20">
+                    <form th:if="${ticket.status.name() != 'CANCELLED'}" th:action="@{/tickets/cancel}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <input type="hidden" name="ticketCode" th:value="${ticket.ticketCode}">
+                        <input type="hidden" name="passengerPhone" th:value="${ticket.passengerPhone}">
+                        <button class="px-stack-md py-2 border border-error text-error font-label-md text-label-md rounded-lg hover:bg-error/5 active:scale-95" type="submit">Hủy vé</button>
+                    </form>
+                    <a th:href="@{/}" class="px-stack-md py-2 border border-primary text-primary font-label-md text-label-md rounded-lg hover:bg-primary/5 active:scale-95">Về trang chủ</a>
+                    <a th:href="@{/trips/search}" class="px-stack-md py-2 bg-secondary-container text-on-secondary-container font-label-md text-label-md rounded-lg hover:brightness-110 shadow-sm active:scale-95">Tìm chuyến khác</a>
+                </div>
+            </div>
+
+            <div th:if="${ticket != null}" class="flex gap-stack-sm items-start p-stack-md bg-error-container/20 border border-error/10 rounded-lg">
+                <span class="material-symbols-outlined text-error text-[20px]">warning</span>
+                <p class="font-body-sm text-body-sm text-on-error-container">Vé chỉ được hủy trước giờ khởi hành ít nhất 12 tiếng.</p>
+            </div>
+        </section>
+    </div>
+</main>
+<footer th:replace="~{fragments/public-ui :: footer}"></footer>
+</body>
+</html>

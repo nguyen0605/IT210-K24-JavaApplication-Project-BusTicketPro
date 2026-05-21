@@ -1,0 +1,176 @@
+<!doctype html>
+<html class="light" lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/public-ui :: head('Bus Ticket Pro')}"></head>
+<body class="bg-background text-on-background">
+<header th:replace="~{fragments/public-ui :: nav('home')}"></header>
+<main class="pt-[72px]">
+    <div th:replace="~{fragments/public-ui :: messages}"></div>
+
+    <section class="relative min-h-[520px] flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img alt="Xe khách chạy trên cung đường núi" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1800&q=80">
+            <div class="absolute inset-0 hero-gradient"></div>
+        </div>
+        <div class="relative z-10 max-w-[1200px] mx-auto px-margin-mobile md:px-margin-desktop text-center text-on-primary">
+            <h1 class="font-display-lg text-display-lg mb-stack-md">Đặt vé xe khách liên tỉnh dễ dàng</h1>
+            <p class="font-body-lg text-body-lg mb-[40px] opacity-90">Tra cứu chuyến xe, chọn ghế và đặt vé chỉ trong vài bước.</p>
+
+            <form th:action="@{/trips/search}" th:object="${searchForm}" method="post" class="bg-surface p-stack-lg rounded-xl shadow-lg w-full max-w-[1000px] mx-auto text-on-surface">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-stack-md">
+                    <div class="flex flex-col text-left">
+                        <label class="font-label-md text-label-md text-on-surface mb-1" for="homeDepartureInput">Điểm đi</label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">location_on</span>
+                            <input id="homeDepartureInput" list="homeDepartureOptions" autocomplete="off" class="w-full pl-10 pr-4 py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary-container outline-none" placeholder="Nhập hoặc chọn điểm đi" required>
+                            <input th:field="*{departureId}" id="homeDepartureId" type="hidden">
+                            <datalist id="homeDepartureOptions">
+                                <option th:each="l:${locations}" th:value="${l.name}" th:attr="data-id=${l.id}"></option>
+                            </datalist>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col text-left">
+                        <label class="font-label-md text-label-md text-on-surface mb-1" for="homeArrivalInput">Điểm đến</label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">near_me</span>
+                            <input id="homeArrivalInput" list="homeArrivalOptions" autocomplete="off" class="w-full pl-10 pr-4 py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary-container outline-none" placeholder="Nhập hoặc chọn điểm đến" required>
+                            <input th:field="*{arrivalId}" id="homeArrivalId" type="hidden">
+                            <datalist id="homeArrivalOptions">
+                                <option th:each="l:${locations}" th:value="${l.name}" th:attr="data-id=${l.id}"></option>
+                            </datalist>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col text-left">
+                        <label class="font-label-md text-label-md text-on-surface mb-1" for="departureDate">Ngày đi</label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">calendar_today</span>
+                            <input th:field="*{departureDate}" id="departureDate" class="w-full pl-10 pr-4 py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary-container outline-none" type="date">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col justify-end">
+                        <button class="bg-secondary-container text-on-secondary-container h-[50px] rounded-lg font-headline-sm text-headline-sm font-bold flex items-center justify-center gap-2 hover:brightness-95 active:scale-95 transition-all" type="submit">
+                            <span class="material-symbols-outlined">search</span>
+                            Tìm chuyến
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section class="py-stack-lg max-w-[1200px] mx-auto px-margin-mobile md:px-margin-desktop">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+            <div class="bg-surface p-stack-lg rounded-xl border border-outline-variant flex flex-col items-center text-center hover:shadow-md transition-shadow">
+                <div class="w-12 h-12 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center mb-stack-md">
+                    <span class="material-symbols-outlined">bolt</span>
+                </div>
+                <h3 class="font-headline-sm text-headline-sm mb-1">Tìm chuyến nhanh</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Chuyến xe được cập nhật theo ngày khởi hành.</p>
+            </div>
+            <div class="bg-surface p-stack-lg rounded-xl border border-outline-variant flex flex-col items-center text-center hover:shadow-md transition-shadow">
+                <div class="w-12 h-12 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center mb-stack-md">
+                    <span class="material-symbols-outlined">event_seat</span>
+                </div>
+                <h3 class="font-headline-sm text-headline-sm mb-1">Chọn ghế trực quan</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Sơ đồ ghế thể hiện rõ ghế trống, đang giữ và đã đặt.</p>
+            </div>
+            <div class="bg-surface p-stack-lg rounded-xl border border-outline-variant flex flex-col items-center text-center hover:shadow-md transition-shadow">
+                <div class="w-12 h-12 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center mb-stack-md">
+                    <span class="material-symbols-outlined">receipt_long</span>
+                </div>
+                <h3 class="font-headline-sm text-headline-sm mb-1">Tra cứu vé dễ dàng</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Kiểm tra vé bằng mã vé và số điện thoại.</p>
+            </div>
+            <div class="bg-surface p-stack-lg rounded-xl border border-outline-variant flex flex-col items-center text-center hover:shadow-md transition-shadow">
+                <div class="w-12 h-12 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center mb-stack-md">
+                    <span class="material-symbols-outlined">verified_user</span>
+                </div>
+                <h3 class="font-headline-sm text-headline-sm mb-1">Đặt vé an toàn</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Hệ thống giữ ghế bằng giao dịch để tránh đặt trùng.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-stack-lg bg-surface-container-low">
+        <div class="max-w-[1200px] mx-auto px-margin-mobile md:px-margin-desktop">
+            <h2 class="font-headline-lg text-headline-lg text-primary">Tuyến đường phổ biến</h2>
+            <p class="font-body-md text-body-md text-on-surface-variant mb-stack-lg">Gợi ý những hành trình được đặt nhiều nhất</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+                <div class="bg-surface rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
+                    <img alt="Hà Nội" class="w-full h-48 object-cover" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80">
+                    <div class="p-stack-md">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="font-headline-sm text-headline-sm">Hà Nội</span>
+                            <span class="material-symbols-outlined text-outline">trending_flat</span>
+                            <span class="font-headline-sm text-headline-sm">Hải Phòng</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="text-on-surface-variant font-body-sm text-body-sm">Từ 180.000đ</div>
+                            <a th:href="@{/trips/search}" class="text-primary border border-primary px-4 py-1.5 rounded-lg font-label-md text-label-md font-semibold hover:bg-primary-container hover:text-on-primary-container">Chọn vé</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-surface rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
+                    <img alt="Nam Định" class="w-full h-48 object-cover" src="https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=900&q=80">
+                    <div class="p-stack-md">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="font-headline-sm text-headline-sm">Hà Nội</span>
+                            <span class="material-symbols-outlined text-outline">trending_flat</span>
+                            <span class="font-headline-sm text-headline-sm">Nam Định</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="text-on-surface-variant font-body-sm text-body-sm">Từ 150.000đ</div>
+                            <a th:href="@{/trips/search}" class="text-primary border border-primary px-4 py-1.5 rounded-lg font-label-md text-label-md font-semibold hover:bg-primary-container hover:text-on-primary-container">Chọn vé</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-surface rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
+                    <img alt="Đà Nẵng" class="w-full h-48 object-cover" src="https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=900&q=80">
+                    <div class="p-stack-md">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="font-headline-sm text-headline-sm">Hà Nội</span>
+                            <span class="material-symbols-outlined text-outline">trending_flat</span>
+                            <span class="font-headline-sm text-headline-sm">Đà Nẵng</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="text-on-surface-variant font-body-sm text-body-sm">Từ 650.000đ</div>
+                            <a th:href="@{/trips/search}" class="text-primary border border-primary px-4 py-1.5 rounded-lg font-label-md text-label-md font-semibold hover:bg-primary-container hover:text-on-primary-container">Chọn vé</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<footer th:replace="~{fragments/public-ui :: footer}"></footer>
+<script>
+    (() => {
+        const hydrateLocationInput = (inputId, hiddenId, listId) => {
+            const input = document.getElementById(inputId);
+            const hidden = document.getElementById(hiddenId);
+            const list = document.getElementById(listId);
+            if (!input || !hidden || !list) return;
+
+            const options = Array.from(list.options);
+            const syncHidden = () => {
+                const matched = options.find((option) => option.value.trim().toLowerCase() === input.value.trim().toLowerCase());
+                hidden.value = matched ? matched.dataset.id : '';
+            };
+
+            const selected = options.find((option) => option.dataset.id === hidden.value);
+            if (selected) input.value = selected.value;
+            input.addEventListener('input', syncHidden);
+            input.form?.addEventListener('submit', syncHidden);
+        };
+
+        hydrateLocationInput('homeDepartureInput', 'homeDepartureId', 'homeDepartureOptions');
+        hydrateLocationInput('homeArrivalInput', 'homeArrivalId', 'homeArrivalOptions');
+    })();
+</script>
+</body>
+</html>

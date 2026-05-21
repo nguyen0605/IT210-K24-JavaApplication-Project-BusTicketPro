@@ -1,0 +1,129 @@
+﻿<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(pageTitle)">
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title th:text="${pageTitle}">Bus Ticket Pro Staff</title>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "background": "#f6faff",
+                        "surface": "#f6faff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#ecf5fe",
+                        "surface-container": "#e6eff8",
+                        "surface-container-high": "#e0e9f2",
+                        "surface-container-highest": "#dbe4ed",
+                        "primary": "#00357f",
+                        "primary-container": "#004aad",
+                        "primary-fixed": "#d9e2ff",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#141d23",
+                        "on-surface-variant": "#434653",
+                        "secondary": "#8b5000",
+                        "secondary-container": "#ff9800",
+                        "secondary-fixed": "#ffdcbe",
+                        "on-secondary-container": "#653900",
+                        "tertiary": "#004313",
+                        "tertiary-fixed": "#83fc8e",
+                        "on-tertiary-fixed": "#002106",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "outline": "#737784",
+                        "outline-variant": "#c3c6d5"
+                    },
+                    borderRadius: {lg: "0.5rem", xl: "0.75rem", full: "9999px"},
+                    spacing: {
+                        "max-width": "1200px",
+                        gutter: "24px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "48px",
+                        "stack-lg": "24px",
+                        "stack-md": "16px",
+                        "stack-sm": "8px",
+                        base: "8px"
+                    },
+                    fontFamily: {
+                        sans: ["Be Vietnam Pro", "sans-serif"],
+                        "label-sm": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "body-sm": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "headline-sm": ["Be Vietnam Pro"],
+                        "headline-md": ["Be Vietnam Pro"],
+                        "headline-lg": ["Be Vietnam Pro"],
+                        "display-lg": ["Be Vietnam Pro"]
+                    },
+                    fontSize: {
+                        "label-sm": ["12px", {lineHeight: "16px", fontWeight: "500"}],
+                        "label-md": ["14px", {lineHeight: "16px", fontWeight: "600"}],
+                        "body-sm": ["14px", {lineHeight: "20px", fontWeight: "400"}],
+                        "body-md": ["16px", {lineHeight: "24px", fontWeight: "400"}],
+                        "headline-sm": ["20px", {lineHeight: "28px", fontWeight: "600"}],
+                        "headline-md": ["24px", {lineHeight: "32px", fontWeight: "600"}],
+                        "headline-lg": ["32px", {lineHeight: "40px", fontWeight: "700"}],
+                        "display-lg": ["40px", {lineHeight: "48px", fontWeight: "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+        .material-symbols-outlined {
+            display: inline-block;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+<header th:fragment="nav(active)" class="bg-surface h-[72px] w-full sticky top-0 border-b border-outline-variant shadow-sm z-50">
+    <div class="flex items-center justify-between px-margin-mobile md:px-margin-desktop w-full max-w-[1200px] mx-auto h-full">
+        <div class="flex items-center gap-stack-lg">
+            <a th:href="@{/staff}" class="text-headline-sm font-bold text-primary tracking-tight">Bus Ticket Pro</a>
+            <nav class="hidden md:flex items-center gap-stack-md ml-stack-lg">
+                <a th:href="@{/staff}" th:class="${active == 'dashboard'} ? 'font-body-md text-body-md text-primary font-bold border-b-2 border-primary pb-1' : 'font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors'">Trang chủ</a>
+                <a th:href="@{/staff/tickets/pending}" th:class="${active == 'pending'} ? 'font-body-md text-body-md text-primary font-bold border-b-2 border-primary pb-1' : 'font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors'">Vé chờ thanh toán</a>
+            </nav>
+        </div>
+        <div class="flex items-center gap-stack-md">
+            <a th:href="@{/staff/profile}" th:class="${active == 'profile'} ? 'font-label-md text-label-md text-primary font-semibold' : 'font-label-md text-label-md text-primary font-semibold hover:underline'">Hồ sơ</a>
+            <form th:action="@{/logout}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button class="bg-primary text-on-primary px-stack-lg py-2 rounded-lg font-label-md text-label-md font-semibold hover:bg-primary-container active:scale-95 transition-all" type="submit">Đăng xuất</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+<div th:fragment="messages" th:if="${success != null or error != null}" class="fixed top-[88px] right-4 z-[100] w-[min(360px,calc(100vw-32px))] space-y-2">
+    <style>
+        .app-toast { animation: app-toast-out 0.25s ease-in forwards; animation-delay: 2s; }
+        @keyframes app-toast-out { to { opacity: 0; transform: translateX(16px); visibility: hidden; } }
+    </style>
+    <div th:if="${success}" class="app-toast rounded-lg border border-[#8bbf91] bg-[#eaf7ed] px-4 py-3 text-[#185321] font-body-sm shadow-lg" th:text="${success}"></div>
+    <div th:if="${error}" class="app-toast rounded-lg border border-error bg-error-container px-4 py-3 text-on-error-container font-body-sm shadow-lg" th:text="${error}"></div>
+</div>
+
+<footer th:fragment="footer" class="bg-surface-container w-full py-stack-lg border-t border-outline-variant mt-auto">
+    <div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop w-full max-w-[1200px] mx-auto gap-stack-md">
+        <div class="text-center md:text-left">
+            <p class="font-headline-sm text-on-surface">Bus Ticket Pro</p>
+            <p class="font-body-sm text-body-sm text-on-surface-variant">© 2026 Bus Ticket Pro - Hệ thống nội bộ</p>
+        </div>
+        <div class="flex flex-wrap justify-center gap-stack-md">
+            <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-secondary" href="#">Hướng dẫn nghiệp vụ</a>
+            <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-secondary" href="#">Quy định thanh toán</a>
+            <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-secondary" href="#">Hỗ trợ kỹ thuật</a>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

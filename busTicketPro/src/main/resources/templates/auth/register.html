@@ -1,0 +1,104 @@
+<!doctype html>
+<html class="light" lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/public-ui :: head('Đăng ký - Bus Ticket Pro')}"></head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<header th:replace="~{fragments/public-ui :: nav('register')}"></header>
+<main class="flex-grow pt-[72px] pb-stack-lg flex items-center justify-center">
+    <div class="w-full max-w-[1200px] px-margin-mobile md:px-margin-desktop grid grid-cols-1 lg:grid-cols-2 gap-gutter items-center my-stack-lg">
+        <div class="hidden lg:flex flex-col justify-center space-y-stack-md pr-stack-lg">
+            <div class="relative w-full aspect-video rounded-xl overflow-hidden shadow-lg border border-outline-variant">
+                <img alt="Luxury Coach" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?auto=format&fit=crop&w=1400&q=80">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                <div class="absolute bottom-6 left-6 right-6 text-white">
+                    <p class="font-headline-sm text-headline-sm mb-2">Hành trình an toàn, tiện nghi đẳng cấp</p>
+                    <p class="font-body-md text-body-md text-white/90">Kết nối hàng trăm điểm đến với dịch vụ vận tải tin cậy.</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-3 gap-stack-sm mt-stack-md">
+                <div class="bg-surface-container-low p-stack-sm rounded-lg text-center"><span class="material-symbols-outlined text-primary mb-1">verified</span><p class="font-label-sm text-label-sm text-on-surface">Uy tín</p></div>
+                <div class="bg-surface-container-low p-stack-sm rounded-lg text-center"><span class="material-symbols-outlined text-primary mb-1">schedule</span><p class="font-label-sm text-label-sm text-on-surface">Đúng giờ</p></div>
+                <div class="bg-surface-container-low p-stack-sm rounded-lg text-center"><span class="material-symbols-outlined text-primary mb-1">support_agent</span><p class="font-label-sm text-label-sm text-on-surface">24/7</p></div>
+            </div>
+        </div>
+
+        <div class="flex justify-center lg:justify-end">
+            <div class="w-full max-w-[560px] bg-surface-container-lowest p-stack-lg rounded-xl shadow-[0px_4px_12px_rgba(0,0,0,0.05)] border border-outline-variant">
+                <div class="text-center mb-stack-lg">
+                    <h1 class="font-headline-md text-headline-md text-primary mb-2">Đăng ký tài khoản hành khách</h1>
+                    <p class="font-body-md text-body-md text-on-surface-variant">Tạo tài khoản để đặt vé, tra cứu vé và quản lý thông tin cá nhân.</p>
+                </div>
+
+                <form th:action="@{/register}" th:object="${form}" method="post" class="space-y-stack-md" novalidate>
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <div th:if="${#fields.hasGlobalErrors()}" th:each="e:${#fields.globalErrors()}" class="rounded-lg border border-error bg-error-container px-4 py-3 text-on-error-container font-body-sm" th:text="${e}"></div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+                        <div class="flex flex-col gap-2">
+                            <label class="font-label-md text-label-md text-on-surface">Họ tên</label>
+                            <input th:field="*{fullName}" th:errorclass="border-error" class="w-full px-3 py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary-container/20 outline-none font-body-md" placeholder="Nguyễn Văn A" type="text">
+                            <p th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}" class="text-error text-sm"></p>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="font-label-md text-label-md text-on-surface">Số điện thoại</label>
+                            <input th:field="*{phone}" th:errorclass="border-error" class="w-full px-3 py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary-container/20 outline-none font-body-md" placeholder="0901234567" type="tel">
+                            <p th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="text-error text-sm"></p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+                        <div class="flex flex-col gap-2">
+                            <label class="font-label-md text-label-md text-on-surface">Email</label>
+                            <input th:field="*{email}" th:errorclass="border-error" class="w-full px-3 py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary-container/20 outline-none font-body-md" placeholder="example@gmail.com" type="email">
+                            <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-error text-sm"></p>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="font-label-md text-label-md text-on-surface">Username</label>
+                            <input th:field="*{username}" th:errorclass="border-error" class="w-full px-3 py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary-container/20 outline-none font-body-md" placeholder="ten_dang_nhap" type="text">
+                            <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-error text-sm"></p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+                        <div class="flex flex-col gap-2">
+                            <label class="font-label-md text-label-md text-on-surface">Mật khẩu</label>
+                            <div class="relative">
+                                <input th:field="*{password}" th:errorclass="border-error" id="registerPassword" class="w-full px-3 py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary-container/20 outline-none font-body-md" placeholder="••••••••" type="password">
+                                <button type="button" onclick="togglePassword('registerPassword')" class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant">visibility</button>
+                            </div>
+                            <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-error text-sm"></p>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="font-label-md text-label-md text-on-surface">Nhập lại mật khẩu</label>
+                            <div class="relative">
+                                <input th:field="*{confirmPassword}" th:errorclass="border-error" id="confirmPassword" class="w-full px-3 py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary-container/20 outline-none font-body-md" placeholder="••••••••" type="password">
+                                <button type="button" onclick="togglePassword('confirmPassword')" class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant">visibility</button>
+                            </div>
+                            <p th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" class="text-error text-sm"></p>
+                            <p th:if="${#fields.hasErrors('passwordConfirmed')}" th:errors="*{passwordConfirmed}" class="text-error text-sm"></p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="font-label-md text-label-md text-on-surface">Địa chỉ</label>
+                        <input th:field="*{address}" th:errorclass="border-error" class="w-full px-3 py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary-container/20 outline-none font-body-md" placeholder="Số nhà, tên đường, quận/huyện, tỉnh/thành phố" type="text">
+                        <p th:if="${#fields.hasErrors('address')}" th:errors="*{address}" class="text-error text-sm"></p>
+                    </div>
+
+                    <div class="pt-stack-md">
+                        <button class="w-full bg-primary text-on-primary font-label-md py-4 rounded-lg shadow-md hover:bg-opacity-90 active:scale-[0.98] flex items-center justify-center gap-2" type="submit">
+                            Đăng ký tài khoản
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    </div>
+                    <div class="text-center mt-stack-md">
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">Đã có tài khoản? <a class="text-primary font-semibold hover:underline" th:href="@{/login}">Đăng nhập</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/public-ui :: footer}"></footer>
+<script>function togglePassword(id){const input=document.getElementById(id);input.type=input.type==='password'?'text':'password';}</script>
+</body>
+</html>

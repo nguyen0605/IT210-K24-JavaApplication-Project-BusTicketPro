@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/staff-ui :: head('Bảng điều khiển nhân viên')}"></head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col">
+<header th:replace="~{fragments/staff-ui :: nav('dashboard')}"></header>
+<div th:replace="~{fragments/staff-ui :: messages}"></div>
+<main class="flex-grow w-full max-w-[1200px] mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg">
+    <div class="mb-stack-lg flex flex-col md:flex-row md:items-end justify-between gap-stack-md">
+        <div>
+            <h1 class="font-headline-lg text-headline-lg text-on-surface">Bảng điều khiển nhân viên</h1>
+            <p class="font-body-md text-body-md text-on-surface-variant">Theo dõi nhanh các vé đang chờ thanh toán và thao tác nghiệp vụ trong ngày.</p>
+        </div>
+        <div class="bg-surface-container-high px-stack-md py-stack-sm rounded-lg flex items-center gap-stack-sm">
+            <span class="material-symbols-outlined text-primary">calendar_today</span>
+            <span class="font-label-md text-label-md" th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy')}">18/05/2026</span>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter mb-12">
+        <div class="bg-surface-container-lowest p-stack-lg rounded-xl shadow-sm border border-outline-variant">
+            <div class="flex items-center justify-between">
+                <span class="font-label-md text-label-md text-on-surface-variant">Vé chờ thanh toán</span>
+                <div class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center"><span class="material-symbols-outlined text-secondary">pending_actions</span></div>
+            </div>
+            <div class="mt-stack-sm">
+                <span class="font-display-lg text-display-lg text-on-surface" th:text="${pendingCount}">0</span>
+                <p class="font-body-sm text-body-sm text-secondary font-medium">Cần xử lý</p>
+            </div>
+        </div>
+        <div class="bg-surface-container-lowest p-stack-lg rounded-xl shadow-sm border border-outline-variant">
+            <div class="flex items-center justify-between">
+                <span class="font-label-md text-label-md text-on-surface-variant">Vé sắp quá hạn</span>
+                <div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center"><span class="material-symbols-outlined text-error">timer</span></div>
+            </div>
+            <div class="mt-stack-sm">
+                <span class="font-display-lg text-display-lg text-error" th:text="${expiringCount}">0</span>
+                <p class="font-body-sm text-body-sm text-error font-medium">Trong 30 phút tới</p>
+            </div>
+        </div>
+        <div class="bg-surface-container-lowest p-stack-lg rounded-xl shadow-sm border border-outline-variant">
+            <div class="flex items-center justify-between">
+                <span class="font-label-md text-label-md text-on-surface-variant">Tra cứu vé</span>
+                <div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center"><span class="material-symbols-outlined text-primary">search</span></div>
+            </div>
+            <a th:href="@{/tickets/lookup}" class="mt-stack-lg inline-flex items-center gap-1 text-primary font-label-md text-label-md hover:underline">Mở tra cứu <span class="material-symbols-outlined text-[18px]">chevron_right</span></a>
+        </div>
+        <div class="bg-surface-container-lowest p-stack-lg rounded-xl shadow-sm border border-outline-variant">
+            <div class="flex items-center justify-between">
+                <span class="font-label-md text-label-md text-on-surface-variant">Hồ sơ cá nhân</span>
+                <div class="w-10 h-10 rounded-full bg-tertiary-fixed flex items-center justify-center"><span class="material-symbols-outlined text-tertiary">account_circle</span></div>
+            </div>
+            <a th:href="@{/staff/profile}" class="mt-stack-lg inline-flex items-center gap-1 text-primary font-label-md text-label-md hover:underline">Cập nhật hồ sơ <span class="material-symbols-outlined text-[18px]">chevron_right</span></a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+        <section class="lg:col-span-2 space-y-stack-lg">
+            <h2 class="font-headline-sm text-headline-sm text-on-surface">Thao tác nhanh</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-stack-md">
+                <a th:href="@{/staff/tickets/pending}" class="group bg-surface-container-lowest p-stack-md rounded-xl border border-outline-variant hover:border-primary hover:shadow-md transition-all flex items-center gap-stack-md">
+                    <div class="w-12 h-12 rounded-lg bg-primary-fixed flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary"><span class="material-symbols-outlined">list_alt</span></div>
+                    <div><p class="font-label-md text-label-md text-on-surface">Xem vé chờ thanh toán</p><p class="font-body-sm text-body-sm text-on-surface-variant">Duyệt và xác nhận giao dịch</p></div>
+                    <span class="material-symbols-outlined ml-auto text-outline-variant group-hover:text-primary">chevron_right</span>
+                </a>
+                <a th:href="@{/tickets/lookup}" class="group bg-surface-container-lowest p-stack-md rounded-xl border border-outline-variant hover:border-primary hover:shadow-md transition-all flex items-center gap-stack-md">
+                    <div class="w-12 h-12 rounded-lg bg-primary-fixed flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary"><span class="material-symbols-outlined">search</span></div>
+                    <div><p class="font-label-md text-label-md text-on-surface">Tra cứu vé</p><p class="font-body-sm text-body-sm text-on-surface-variant">Tìm thông tin khách hàng</p></div>
+                    <span class="material-symbols-outlined ml-auto text-outline-variant group-hover:text-primary">chevron_right</span>
+                </a>
+            </div>
+        </section>
+        <aside class="space-y-stack-lg">
+            <h2 class="font-headline-sm text-headline-sm text-on-surface">Thông báo nghiệp vụ</h2>
+            <div class="bg-primary-container p-stack-lg rounded-xl text-on-primary relative overflow-hidden">
+                <span class="material-symbols-outlined text-primary-fixed mb-stack-sm block">info</span>
+                <h3 class="font-headline-sm text-headline-sm mb-stack-sm">Lưu ý xử lý vé</h3>
+                <p class="font-body-sm text-body-sm mb-stack-md">Kiểm tra hạn thanh toán trước khi xác nhận hoặc hủy vé để tránh sai lệch trạng thái ghế.</p>
+                <a th:href="@{/staff/tickets/pending}" class="bg-secondary-container text-on-secondary-container font-label-md text-label-md px-stack-md py-stack-sm rounded-lg inline-block">Xem danh sách</a>
+            </div>
+        </aside>
+    </div>
+
+    <section class="mt-12 bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+        <div class="px-stack-lg py-stack-md border-b border-outline-variant flex items-center justify-between">
+            <h3 class="font-headline-sm text-headline-sm text-on-surface">Vé chờ gần đây</h3>
+            <a th:href="@{/staff/tickets/pending}" class="text-primary font-label-md text-label-md hover:underline">Xem tất cả</a>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-surface-container text-on-surface-variant font-label-md text-label-md">
+                <tr><th class="px-stack-lg py-stack-sm">Mã vé</th><th class="px-stack-lg py-stack-sm">Khách hàng</th><th class="px-stack-lg py-stack-sm">Tuyến đường</th><th class="px-stack-lg py-stack-sm">Hạn thanh toán</th><th class="px-stack-lg py-stack-sm text-right">Giá vé</th></tr>
+                </thead>
+                <tbody class="divide-y divide-outline-variant">
+                <tr th:each="t,iter : ${tickets}" th:if="${iter.index < 5}" class="hover:bg-surface-container-low">
+                    <td class="px-stack-lg py-stack-md"><a class="font-label-md text-primary" th:href="@{/staff/tickets/{id}(id=${t.id})}" th:text="${t.ticketCode}">#BT</a></td>
+                    <td class="px-stack-lg py-stack-md font-body-md" th:text="${t.passengerName}">Khách</td>
+                    <td class="px-stack-lg py-stack-md font-body-md"><span th:text="${t.trip.route.departure.name}">SG</span> → <span th:text="${t.trip.route.arrival.name}">DL</span></td>
+                    <td class="px-stack-lg py-stack-md text-error" th:text="${#temporals.format(t.expiredTime,'HH:mm dd/MM')}">15:30</td>
+                    <td class="px-stack-lg py-stack-md text-right font-label-md text-secondary" th:text="${#numbers.formatDecimal(t.totalAmount,0,'COMMA',0,'POINT')} + 'đ'">0đ</td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(tickets)}"><td colspan="5" class="px-stack-lg py-stack-lg text-center text-on-surface-variant">Không có vé chờ thanh toán.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+<footer th:replace="~{fragments/staff-ui :: footer}"></footer>
+</body>
+</html>
